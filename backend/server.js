@@ -13,6 +13,7 @@ server.use(express.json())
 server.use('/api/v1', router)
 
 
+
 server.listen(process.env.PORT, () => {
     console.clear()
     console.log('Hello - Server its running!')

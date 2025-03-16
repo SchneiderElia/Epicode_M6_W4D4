@@ -1,3 +1,59 @@
 @baseUrl = http://localhost:4000/api/v1
 
 GET {{baseUrl}}
+
+
+//////////////////   users  callback  //////////////////////////////////////
+
+###
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+    "firstName" : "Elia",
+    "lastName" : "Schneider"
+}
+
+
+###
+PUT {{baseUrl}}/users/:userId
+Content-Type: application/json
+
+{
+    "firstName" : "Elia-Modify",
+    "lastName" : "Schneider"
+}
+
+###
+DELETE {{baseUrl}}/users/:userId
+Content-Type: application/json
+
+
+
+
+//////////////////  posts callback  //////////////////////////////////////
+
+###
+POST {{baseUrl}}/post
+Content-Type: application/json
+
+{
+    "author" : "SchCreativeDesign",
+    "titel" : "How to make brand identity",
+    "content" : "............"
+}
+
+
+###
+PUT {{baseUrl}}/post/:postId
+Content-Type: application/json
+
+{
+    "author" : "SchCreativeDesign",
+    "titel" : "How to make brand identity - Modify",
+    "content" : "@@@@@@@@@@@@@@@@@@@"
+}
+
+###
+DELETE {{baseUrl}}/post/:postId
+Content-Type: application/json
