@@ -7,9 +7,10 @@ import router from './router/router.js'
 
 
 const server = express() //server build it
-server.use(cors)
+server.use(cors())
 server.use(express.json())
-server.use(router)
+//monto il router con prefisso cosi tutte avranno /api
+server.use('/api/v1', router)
 
 
 server.listen(process.env.PORT, () => {
