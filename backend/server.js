@@ -2,6 +2,9 @@ import 'dotenv/config' //to autocomplete final import to.js
 import express from 'express'
 import cors from 'cors' //comunication to front
 import router from './router/router.js'
+import mongoose from 'mongoose'
+
+
 
 
 
@@ -13,6 +16,12 @@ server.use(express.json())
 server.use('/api/v1', router)
 
 
+const connectionString = process.env.MONGODB_CONNECTION_URL
+
+await mongoose.connect(connectionString)
+console.log('Hey im your database and im connected')
+
+mongoose.connection.close()
 
 server.listen(process.env.PORT, () => {
     console.clear()
