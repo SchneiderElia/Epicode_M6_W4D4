@@ -1,19 +1,19 @@
-import { Schema, model} from "mmongoose"
+import  { Schema, model} from "mongoose"
 
 const userSchema = new Schema({
 
    firstName: {
     type: String,
-    required: true,
+    //required: true,
   },
   lastName: {
     type: String,
-    required: true,
+    //required: true,
   },
   email: {
     type: String,
-    required: true,
-    unique: true,
+    //required: true,
+    //unique: true,
   },
   dateOfBirth:{
     type: Date,

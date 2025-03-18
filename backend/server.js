@@ -21,7 +21,7 @@ const connectionString = process.env.MONGODB_CONNECTION_URL
 await mongoose.connect(connectionString)
 console.log('Hey im your database and im connected')
 
-mongoose.connection.close()
+//mongoose.connection.close()
 
 server.listen(process.env.PORT, () => {
     console.clear()
