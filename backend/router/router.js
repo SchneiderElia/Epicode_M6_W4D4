@@ -1,8 +1,14 @@
-import { Router } from "express"
+import { response, Router } from "express"
 import User from "../db/models/User.js"
 import Post from "../db/models/Post.js"
 
+/////////////////////////////////////////////////////////////////////////////
+import cloudinariStorage from "../cloudinaryStorage.js"
+import postCoverUpload from "../middleware/uploadsCoverPost.js"
+import uploadAvatar from "../middleware/uploadAvatar.js"
 
+
+////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -44,9 +50,12 @@ router.get('/users/:userId', async(request, response, next) => {
 
 ///////// POST create single users /////////////////////////////////////////////////////////////
 
-router.post('/users', async (request, response, next) => {
+router.post('/users', uploadAvatar.single('avatar'),
+     async (request, response, next) => {
     
-    const createNewUser = await User.create(request.body)
+    const avatar = {...request.body, avatar: request.file.path}
+    
+    const createNewUser = await User.create(avatar)
     console.log('hello u build a new user')
     response.send(createNewUser)
     next()
@@ -63,6 +72,19 @@ router.put('/users/:userId', async(request, response, next) => {
     response.send(updatedUser)
     next()
 })
+
+///////// PATCH modify avatar single users /////////////////////////////////////////////////////////////
+
+router.patch( '/users/:userId/avatar', uploadAvatar.single('avatar'),
+    async(request, response, next) => {
+        const avatar = {...request.body, avatar: request.file.path}
+        const uploadAvatar = await User.findByIdAndUpdate(request.params.userId,
+        avatar, {new: true}
+        )
+        console.log('hello u modify u user avatar profile')
+        response.send(uploadAvatar)
+        next()
+     })
 
 ///////// DELETE single users /////////////////////////////////////////////////////////////
 
@@ -101,9 +123,12 @@ router.get('/post/:postId', async (request, response, next) => {
 
 ///////// POST  create single articles /////////////////////////////////////////////////////////////
 
-router.post('/post', async (request, response, next) => {
+router.post('/post', postCoverUpload.single('cover'),
+    async (request, response, next) => {
 
-    const createNewPost = await Post.create(request.body)
+    const cover = {...request.body, cover: request.file.path}
+    
+    const createNewPost = await Post.create(cover)
 
     console.log('hello u build a new post')
     console.log(request.body)
@@ -125,6 +150,18 @@ router.put('/post/:postId', async (request, response, next) => {
     next()
 })
 
+///////// PATCH modify avatar single users /////////////////////////////////////////////////////////////
+
+router.patch( '/post/:postId/cover', postCoverUpload.single('cover'),
+    async(request, response, next) => {
+        const cover = {...request.body, cover: request.file.path}
+        const uploadCover = await Post.findByIdAndUpdate(request.params.postId,
+        cover, {new: true}
+        )
+        console.log('hello u modify your post cover')
+        response.send(uploadCover)
+        next()
+     })
 ///////// DELETE single articles /////////////////////////////////////////////////////////////
 
 router.delete('/post/:postId', async (request, response, next) => {
@@ -147,7 +184,7 @@ router.get('/users/:userId/post', async(request, response, next) => {
 
     const userId = request.params.userId
     const singleUserAllPost = await Post.where({userId})
-    
+
     console.log('hello look all my single post')
     response.send(singleUserAllPost)
     next()
