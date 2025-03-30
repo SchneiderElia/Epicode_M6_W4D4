@@ -40,9 +40,11 @@ POST {{baseUrl}}/post
 Content-Type: application/json
 
 {
-    "author" : "SchCreativeDesign",
+    "category" : "design",
     "titel" : "How to make brand identity",
-    "content" : "............"
+    "cover": "",
+    "content" : "questo e il content del post2"
+    
 }
 
 
