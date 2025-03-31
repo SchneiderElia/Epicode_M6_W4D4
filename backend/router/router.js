@@ -1,6 +1,7 @@
 import 'dotenv/config'
 //////////////////////  CRUD ROUTE SCHEMA    ///////////////////////////////////////
 import { response, Router } from "express"
+import bcrypt from "bcrypt"
 import User from "../db/models/User.js"
 import Post from "../db/models/Post.js"
 //////////////////  UPLOAD IMG MIDDELWEAR    //////////////////////////////////////////////////////
@@ -9,6 +10,10 @@ import postCoverUpload from "../middleware/uploadsCoverPost.js"
 import uploadAvatar from "../middleware/uploadAvatar.js"
 ////////////////////  HELPER MAILER STG.   //////////////////////////////////////////////////
 import mailer from "../helper/mailer.js"
+////////////////////  registation schema   //////////////////////////////////////////////////
+import UserRegistration from '../db/models/UserRegistration.js'
+//////////////////// JWT autentication  //////////////////////////////////////////////////
+import jwt from 'jsonwebtoken'
 
 
 
@@ -24,6 +29,83 @@ const router = Router()
     next()
 })
   */
+/////////  USERS LOGIN  //////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+///////// GET  login page  /////////////////////////////////////////////////////////////
+
+router.get('/login', async (request, response, next) => {
+
+
+    console.log("hello this a login page")
+    console.log(request.body)
+    response.send(request.body)
+    next()
+
+})
+
+///////// POST  login page  /////////////////////////////////////////////////////////////
+
+router.post('/login', async (request, response, next) => {
+
+    //const user = await User.findOne({email: request.body.email})
+    const user = await UserRegistration.findOne({email: request.body.email})
+    await bcrypt.compare(request.body.password, user.password)
+    
+    jwt.sign(
+        {userId : user._id},
+        process.env.JWT_SECRET,
+        {expiresIn: '1h'},
+        (err, jwtToken) => {
+            if (err) return response.status(500).send();
+        
+            return response.send({
+              token: jwtToken,
+            });
+          }
+    )
+
+
+    console.log("hello user happy login")
+    console.log(request.body)
+   
+    next()
+
+})
+
+
+/////////  USERS REGISTRATION //////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+///////// GET  registation page  /////////////////////////////////////////////////////////////
+
+/* router.get('/singin', async (request, response, next) => {
+
+
+    console.log("hello this a login page")
+    console.log(request.body)
+    response.send(request.body)
+    next()
+
+}) */
+///////// POST  registation page new user   /////////////////////////////////////////////////////////////
+
+
+
+router.post('/singin', async (request, response, next) => {
+
+    const newUser = await UserRegistration.create({
+        ...request.body,
+        password: await bcrypt.hash(request.body.password, 10)
+    });
+
+
+    console.log("hello this a login page")
+    console.log(request.body)
+    response.send(newUser)
+    next()
+});
+
+
+    
 
 /////////  USERS   //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -32,9 +114,12 @@ const router = Router()
 router.get('/users', async(request, response, next) => {
 
     const allUsers = await User.where({})
+    const newUserRegistartion = await UserRegistration.where({})
+    const all = [...allUsers, ...newUserRegistartion]
+
 
     console.log('hello look all users')
-    response.send(allUsers)
+    response.send(all)
     next()
 })
 
@@ -42,9 +127,15 @@ router.get('/users', async(request, response, next) => {
 
 router.get('/users/:userId', async(request, response, next) => {
 
-    const singleUser = await User.findById(request.params.userId)
+    //const singleUser = await User.findById(request.params.userId)
+    const singleUserRegistration = await UserRegistration.where({_id: request.params.userId})
+    const singleUser = await User.where({_id: request.params.userId})
+    const single = [...singleUser, ...singleUserRegistration]
+    
+
+    
     console.log('hello look single user')
-    response.send(singleUser)
+    response.send(single)
     next()
 })
 
@@ -102,6 +193,9 @@ router.patch( '/users/:userId/avatar', uploadAvatar.single('avatar'),
 router.delete('/users/:userId', async(request, response, next) => {
 
     const userDeleat = await User.findByIdAndDelete(request.params.userId)
+    const userDeleatLog = await UserRegistration.findByIdAndDelete(request.params.userId)
+
+    console.log('hello u delete your user')
     response.send('byby user deleted')
     next()
 })

@@ -63,9 +63,41 @@ DELETE {{baseUrl}}/post/:postId
 Content-Type: application/json
 
 ###
-POST {{baseUrl}}/post/67e947e4bebccec0fdb33ac1/comments
+POST {{baseUrl}}/post/67e98a0b1b3e76a47e6f9f4d/comments
 Content-Type:  application/json
 
 {
-    "text" : "comments"
+    "text" : "comments hello"
 }
+
+###
+PUT {{baseUrl}}/post/67e98a0b1b3e76a47e6f9f4d/comments/67ea695948c011495758184b
+Content-Type:  application/json
+
+{
+    "text" : "comments hello MODIFY"
+}
+
+###
+DELETE  {{baseUrl}}/post/67e98a0b1b3e76a47e6f9f4d/comments/67ea695948c011495758184b
+Content-Type: application/json
+
+
+###
+POST  {{baseUrl}}/singin
+Content-Type: application/json
+{
+    "firstName" : "EXTASY",
+    "lastName" : "Molly",
+    "email": "molly@molly.com",
+    "password" : "MOLLY"
+}
+
+###
+POST  {{baseUrl}}/login
+Content-Type: application/json
+
+ {
+    "email": "lasd@mdma.com",
+    "password" : "LSD"
+ }

@@ -3,6 +3,10 @@ import express from 'express'
 import cors from 'cors' //comunication to front
 import router from './router/router.js'
 import mongoose from 'mongoose'
+//import morgan from 'morgan'
+//import expressListEndpoints from 'express-list-endpoints'
+
+
 
 
 
@@ -11,6 +15,7 @@ import mongoose from 'mongoose'
 
 
 const server = express() //server build it
+//server.use(morgan('dev'))
 server.use(cors())
 server.use(express.json())
 //monto il router con prefisso cosi tutte avranno /api
@@ -28,4 +33,5 @@ console.log('Hey im your database and im connected')
 server.listen(process.env.PORT, () => {
     console.clear()
     console.log('Hello - Server its running!')
+    //console.table(expressListEndpoints(server))
 })
