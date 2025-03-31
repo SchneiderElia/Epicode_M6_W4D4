@@ -1,4 +1,23 @@
+
 import { Schema, model } from 'mongoose'
+
+const commentSchema = new Schema({
+    author: {
+      type: Schema.Types.ObjectId,
+      ref: 'User', // Reference to the User model
+      //required: true, // Ensure every comment has an author
+    },
+    text: {
+      type: String,
+      //required: true, // Ensure every comment has text content
+    },
+    date: {
+      type: Date,
+      default: Date.now, // Default to the current date and time
+    },
+  });
+  
+
 
 const postSchema = new Schema ({
 
@@ -21,8 +40,9 @@ const postSchema = new Schema ({
     },
     content: {
         type: String,
-    }
+    },
 
+    comments: [commentSchema],
 
 },{timestamps: true})
 

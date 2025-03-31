@@ -61,3 +61,11 @@ Content-Type: application/json
 ###
 DELETE {{baseUrl}}/post/:postId
 Content-Type: application/json
+
+###
+POST {{baseUrl}}/post/67e947e4bebccec0fdb33ac1/comments
+Content-Type:  application/json
+
+{
+    "text" : "comments"
+}

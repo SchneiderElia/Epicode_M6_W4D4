@@ -1,14 +1,15 @@
+import 'dotenv/config'
+//////////////////////  CRUD ROUTE SCHEMA    ///////////////////////////////////////
 import { response, Router } from "express"
 import User from "../db/models/User.js"
 import Post from "../db/models/Post.js"
-
-/////////////////////////////////////////////////////////////////////////////
-import cloudinariStorage from "../cloudinaryStorage.js"
+//////////////////  UPLOAD IMG MIDDELWEAR    //////////////////////////////////////////////////////
+//import cloudinariStorage from "../cloudinaryStorage.js"
 import postCoverUpload from "../middleware/uploadsCoverPost.js"
 import uploadAvatar from "../middleware/uploadAvatar.js"
+////////////////////  HELPER MAILER STG.   //////////////////////////////////////////////////
+import mailer from "../helper/mailer.js"
 
-
-////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -53,10 +54,20 @@ router.get('/users/:userId', async(request, response, next) => {
 router.post('/users', uploadAvatar.single('avatar'),
      async (request, response, next) => {
     
-    const avatar = {...request.body, avatar: request.file.path}
+    const avatar = {...request.body, avatar: request?.file?.path}
     
     const createNewUser = await User.create(avatar)
-    console.log('hello u build a new user')
+
+await mailer.sendMail({
+      from: "elyssch@gmail.com", // Use environment variable
+      to: request.body.email,
+      subject: 'Hello welcome to striveBlog', // Corrected spelling
+      text: 'Welcome to the striveBlog', // Corrected spelling
+      html: `<strong>Enjoy to see you here ${request.body.firstName}</strong>`,
+    },console.log("email sent"));
+
+
+    console.log('hello u build a new user') 
     response.send(createNewUser)
     next()
 })
@@ -130,6 +141,13 @@ router.post('/post', postCoverUpload.single('cover'),
     
     const createNewPost = await Post.create(cover)
 
+    await mailer.sendMail({
+        from: "elyssch@gmail.com", // Use environment variable
+        to: request.body.email,
+        subject: 'YEP your post is created', // Corrected spelling
+        html: `<strong>${request.body.firstName} your new post i onlince now</strong>`,
+      },console.log("email sent"));
+
     console.log('hello u build a new post')
     console.log(request.body)
     response.send(createNewPost)
@@ -190,6 +208,68 @@ router.get('/users/:userId/post', async(request, response, next) => {
     next()
 })
 
+/////////  COMMENTS  //////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+///////// GET all comments id post /////////////////////////////////////////////////////////////
+
+router.get('/post/:postId/comments', async (request, response, next) => {
+    
+      const postId = request.params.postId;
+      const post = await Post.findById(postId).populate('comments.author')
+  
+      console.log('hello look all my post comments');
+      response.send(post.comments);
+    next()
+  });
+
+///////// POST single comments id post /////////////////////////////////////////////////////////////
+
+router.post('/post/:postId/comments', async (request, response, next) => {
+    
+    const postId = request.params.postId;
+    const post = await Post.findById(postId).populate('comments')
+    post.comments.push(request.body)
+    await post.save()
+    
+
+    console.log('hello look all my post comments');
+    response.send(post.comments);
+  next()
+});
+
+///////// PUT single comments id post /////////////////////////////////////////////////////////////
+
+router.put('/post/:postId/comments/:commentId', async (request, response, next) => {
+
+    const postId = request.params.postId;
+    const post = await Post.findById(postId).populate('comments')
+    post.comments.id(request.params.commentId).set(request.body)
+    await post.save()
+
+   /*   const post = await Post.findByIdAndUpdate(postId,
+        request.body, {new: true}
+     )
+    console.log('hello look u comment are modify')
+    response.send(post) */
+    console.log('hello look u comment are modify')
+    response.send(post)
+    next()
+    
+})
+
+///////// DELETE single comments id post /////////////////////////////////////////////////////////////
+
+router.delete('/post/:postId/comments/:commentId', async (request, response, next) => {
+
+    const postId = request.params.postId;
+    const post = await Post.findById(postId)
+    post.comments.id(request.params.commentId).remove()
+ 
+    console.log('hello u delete your single comment')
+    response.send(post)
+    next();
+    
+})
 
 
 export default router

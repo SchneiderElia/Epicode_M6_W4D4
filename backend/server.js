@@ -9,11 +9,13 @@ import mongoose from 'mongoose'
 
 
 
+
 const server = express() //server build it
 server.use(cors())
 server.use(express.json())
 //monto il router con prefisso cosi tutte avranno /api
 server.use('/api/v1', router)
+
 
 
 const connectionString = process.env.MONGODB_CONNECTION_URL
