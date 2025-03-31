@@ -3,7 +3,7 @@ import 'dotenv/config'
 import { response, Router } from "express"
 import bcrypt from "bcrypt"
 import User from "../db/models/User.js"
-import Post from "../db/models/Post.js"
+import Post from "./db/models/Post.js"
 //////////////////  UPLOAD IMG MIDDELWEAR    //////////////////////////////////////////////////////
 //import cloudinariStorage from "../cloudinaryStorage.js"
 import postCoverUpload from "../middleware/uploadsCoverPost.js"
